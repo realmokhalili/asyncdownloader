@@ -14,4 +14,6 @@ class ConsoleReporter(ABC):
 
     def report(self, chunck: bytes, file_size: str):
         self.downloaded += len(chunck)
-        print(f"{humanbytes(self.downloaded)}/{file_size}", end="\r")
+        print(f"{humanbytes(self.downloaded)}/{humanbytes(file_size)}", end="\r")
+        if self.downloaded == file_size:
+            print("succesfully downloaded", end="\n")
