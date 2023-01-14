@@ -1,4 +1,4 @@
-def humanbytes(self, B):
+def humanbytes(B):
     """Return the given bytes as a human friendly KB, MB, GB, or TB string."""
     B = float(B)
     KB = float(1024)
