@@ -5,7 +5,7 @@ from asyncio import Queue
 
 class BaseFile(ABC):
     @abstractmethod
-    async def save(self, filename):
+    async def save(self, file_name):
         pass
 
     @abstractproperty
@@ -21,8 +21,9 @@ class AioFiles(BaseFile):
     def queue(self):
         return self._queue
     
-    async def save(self, filename):
-        async with aiofiles.open(filename, mode="wb") as file:
-            while True:
+    async def save(self, file_name):
+        async with aiofiles.open(file_name, mode="wb") as file:
+            while not self.queue.empty():
                 chunck = await self.queue.get()
                 await file.write(chunck)
+        print(f"successfully downloaded {file_name}")
