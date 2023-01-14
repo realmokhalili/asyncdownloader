@@ -7,7 +7,6 @@ class Download:
     def __init__(self, http_client, file_client):
         self.http_client: BaseHTTP = http_client
         self.file_client: BaseFile = file_client
-        self.queue = asyncio.Queue()
         
     def _humanbytes(self, B):
         """Return the given bytes as a human friendly KB, MB, GB, or TB string."""
@@ -34,7 +33,8 @@ class Download:
 
     async def download(self, url):
         name = os.path.basename(url)
-        print(f"{name} : {self._get_content_length(url)}")
+        print(f"{name} : {await self._get_content_length(url)}")
+        asyncio.create_task(self.file_client.save(name))
         response = await self.http_client.get(url)
         async for chunk in response.content.iter_chunked(10 * 1024 * 1024):
-            await self.queue.put(chunk)
+            await self.file_client.queue.put(chunk)
