@@ -18,8 +18,8 @@ class AioHTTP(BaseHTTP):
 
     async def get(self, url):
         async with self.client.get(url) as response:
-            async for chunck in response.content.iter_chunked(10 * 1024 * 1024):
-                yield chunck
+            async for chunk in response.content.iter_chunked(10 * 1024 * 1024):
+                yield chunk
             
 
     async def head(self, url):

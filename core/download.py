@@ -5,11 +5,10 @@ from .reporter import BaseReporter
 from .exceptions import InvalidURL
 
 class Download:
-    def __init__(self, http_client, file_client, reporter_client, chunck_size=10 * 1024 * 1024):
+    def __init__(self, http_client, file_client, reporter_client):
         self.http_client: BaseHTTP = http_client
         self.file_client: BaseFile = file_client
         self.report_client: BaseReporter = reporter_client
-        self.chunk_size = chunck_size
         
     async def _get_content_length(self, url):
         headers = await self.http_client.head(url)
@@ -25,6 +24,6 @@ class Download:
         await file.asend(None)
         reporter = self.report_client.report(content_length, file_name)
         reporter.send(None)
-        async for chunck in self.http_client.get(url):
-            await file.asend(chunck)
-            reporter.send(chunck)
+        async for chunk in self.http_client.get(url):
+            await file.asend(chunk)
+            reporter.send(chunk)

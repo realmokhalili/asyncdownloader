@@ -15,5 +15,5 @@ class ConsoleReporter(ABC):
             open(os.devnull, "wb"), "write", miniters=1, desc=file_name, total=file_size
         ) as fout:
             while True:
-                chunck = yield
-                fout.write(chunck)
+                chunk = yield
+                fout.write(chunk)

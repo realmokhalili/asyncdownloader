@@ -12,5 +12,5 @@ class AioFiles(BaseFile):
     async def save(self, file_name):
         async with aiofiles.open(file_name, mode="wb") as file:
             while True:
-                chunck = yield
-                await file.write(chunck)
+                chunk = yield
+                await file.write(chunk)
