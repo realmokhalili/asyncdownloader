@@ -1,5 +1,6 @@
 import aiohttp
 from abc import ABC, abstractmethod
+from .exceptions import InvalidURL
 
 class BaseHTTP(ABC):
     @abstractmethod
@@ -17,8 +18,14 @@ class AioHTTP(BaseHTTP):
 
     async def get(self, url):
         async with self.client.get(url) as response:
-            return response
+            async for chunck in response.content.iter_chunked(10 * 1024 * 1024):
+                yield chunck
+            
 
     async def head(self, url):
-        async with self.client.head(url) as response:
-            return response
+        try:
+            async with self.client.head(url) as response:
+                return response
+        except aiohttp.InvalidURL as exc:
+            raise InvalidURL(exc.url.name)
+            
