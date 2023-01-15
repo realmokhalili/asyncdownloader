@@ -7,7 +7,8 @@ from core.reporter import ConsoleReporter
 from core.http import AioHTTP
 
 async def main(urls):
-    async with aiohttp.ClientSession() as session:
+    timeout = aiohttp.ClientTimeout(total=None)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
         download = Download(AioHTTP(session), AioFiles(), ConsoleReporter())
         tasks = [asyncio.create_task(download.download(url)) for url in urls]
         result = await asyncio.gather(*tasks, return_exceptions=True)
