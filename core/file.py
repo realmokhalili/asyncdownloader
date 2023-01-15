@@ -9,7 +9,6 @@ class BaseFile(ABC):
         pass
 
 class AioFiles(BaseFile):
-
     async def save(self, file_name):
         async with aiofiles.open(file_name, mode="wb") as file:
             while True:

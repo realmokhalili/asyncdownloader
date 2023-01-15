@@ -1,19 +1,19 @@
+import os
 from abc import ABC, abstractmethod
-from .utils import humanbytes
+from tqdm import tqdm
 
 
 class BaseReporter(ABC):
     @abstractmethod
-    async def report(self, chunck: bytes, file_size: str):
-        pass
+    async def report(self, file_size: str, file_name:str):
+        yield
 
 
 class ConsoleReporter(ABC):
-    def __init__(self):
-        self.downloaded = 0
-
-    def report(self, chunck: bytes, file_size: str):
-        self.downloaded += len(chunck)
-        print(f"{humanbytes(self.downloaded)}/{humanbytes(file_size)}", end="\r")
-        if self.downloaded == file_size:
-            print("succesfully downloaded", end="\n")
+    def report(self, file_size: str, file_name: str):
+        with tqdm.wrapattr(
+            open(os.devnull, "wb"), "write", miniters=1, desc=file_name, total=file_size
+        ) as fout:
+            while True:
+                chunck = yield
+                fout.write(chunck)
