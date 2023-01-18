@@ -1,3 +1,4 @@
+import os
 import argparse
 import asyncio
 import aiohttp
@@ -6,7 +7,8 @@ from core.file import AioFiles
 from core.reporter import ConsoleReporter
 from core.http import AioHTTP
 
-async def main(urls):
+async def main(urls, path):
+    os.chdir(path)
     timeout = aiohttp.ClientTimeout(total=None)
     async with aiohttp.ClientSession(timeout=timeout) as session:
         download = Download(AioHTTP(session), AioFiles(), ConsoleReporter())
@@ -20,5 +22,6 @@ async def main(urls):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--urls", nargs="*", type=str, required=True)
+    parser.add_argument("--path", type=str, default=os.getcwd())
     args = parser.parse_args()
-    asyncio.run(main(args.urls))
+    asyncio.run(main(args.urls, args.path))
